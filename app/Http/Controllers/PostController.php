@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\PostType;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -24,7 +25,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('post.create');
     }
 
     /**
@@ -33,9 +34,14 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, PostType $type)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'slug' => 'required|unique:posts',
+            'content' => 'required',
+        ]);
+        $type->posts()->create($request->all());
     }
 
     /**
@@ -44,9 +50,9 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show(PostType $type, Post $post)
     {
-        //
+        return view('post')->with(compact('type', 'post'));
     }
 
     /**
@@ -55,9 +61,9 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit(PostType $postType, Post $post)
     {
-        //
+        return view('post.edit')->with('post', $post);
     }
 
     /**
@@ -67,9 +73,15 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, PostType $postType, Post $post)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'slug' => 'required|unique:posts,slug,'.$post->id,
+            'content' => 'required',
+        ]);
+        $post->update($request->all());
+        return redirect()->back()->with('message', $postType->name . " saved.");
     }
 
     /**

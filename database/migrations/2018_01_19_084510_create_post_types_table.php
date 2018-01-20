@@ -15,8 +15,10 @@ class CreatePostTypesTable extends Migration
     {
         Schema::create('post_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
-            $table->integer('active');
+            $table->string('slug')->unique();
+            $table->string('name');
+            $table->string('content')->nullable();
+            $table->integer('is_active')->default(1);
             $table->timestamps();
         });
     }

@@ -12,9 +12,9 @@ class PostTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(PostType $postType)
     {
-        //
+        return view('posttype')->with('type', $postType);
     }
 
     /**
@@ -22,9 +22,9 @@ class PostTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(PostType $postType)
     {
-        //
+        return view('posttype.create')->with('postType', $postType);
     }
 
     /**
@@ -33,9 +33,15 @@ class PostTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, PostType $postType)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'slug' => 'required|unique:post_types,slug',
+            'content' => 'required',
+        ]);
+        $postType->create($request->all());
+        return redirect('/');
     }
 
     /**
@@ -46,7 +52,7 @@ class PostTypeController extends Controller
      */
     public function show(PostType $postType)
     {
-        //
+        return view('posttype.edit')->with('postType', $postType);
     }
 
     /**
@@ -57,7 +63,7 @@ class PostTypeController extends Controller
      */
     public function edit(PostType $postType)
     {
-        //
+        return view('posttype.edit')->with('posttype', $postType);
     }
 
     /**
@@ -69,7 +75,12 @@ class PostTypeController extends Controller
      */
     public function update(Request $request, PostType $postType)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'slug' => 'required|unique:posts',
+            'content' => 'required',
+        ]);
+        $postType->update($request->all());
     }
 
     /**
